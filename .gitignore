@@ -1,0 +1,11 @@
+# Local environments, runtime state and caches
+.runtime/
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.streamlit/secrets.toml
+*.log
+.DS_Store
+Thumbs.db
