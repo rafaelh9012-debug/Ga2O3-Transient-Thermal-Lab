@@ -2,3 +2,5 @@ Project name: Ga2O3 Transient Thermal Lab
 Project branding: RafaelDaSquidman
 Software: Open-source Python thermal-simulation project
 Publisher label is descriptive project metadata; it is not a Windows code-signing certificate.
+
+Application build: Transient Thermal Lab V2 (high-contrast/Turbo interface)

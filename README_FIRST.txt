@@ -1,17 +1,16 @@
-Ga2O3 TRANSIENT THERMAL LAB — RafaelDaSquidman
-=================================================
+Ga₂O₃ Transient Thermal Lab — V2 (RafaelDaSquidman)
 
-1) Double-click OPEN_WEB_VERSION.htm to inspect offline precomputed curves.
-2) To run the full simulator in Spyder, open START_APP.py and press Run.
-3) For a local Windows one-click attempt, double-click RUN_WITH_EXISTING_PYTHON.bat.
-   Python 3.11+ must already exist; missing packages may need internet.
-4) To publish the FULL interactive app to your own web URL, follow
-   DEPLOY_TO_STREAMLIT.md, creating a SEPARATE GitHub repository.
+NEW: Turbo heatmap palette, separate-contrast toggle, plot-layout corrections,
+properly rendered governing equation and refreshed offline HTML preview.
 
-Cloud main file: Python_Code/app.py
-Cloud dependencies: Python_Code/requirements.txt
-Theme: .streamlit/config.toml
+OPEN_WEB_VERSION.htm              → double-click for an offline, precomputed snapshot
+START_APP.py                      → open in Spyder/VS Code/your Python IDE and Run
+RUN_WITH_EXISTING_PYTHON.bat      → launch from an existing Windows Python
+Python_Code/app.py               → main file for separate Streamlit deployment
+QA_V2_CHANGELOG.md               → details of fixes, tests and limitations
 
-No EXE is included. No Windows publisher certificate is claimed.
-Scientific limitation: The thermal-only model is not validated against
-measured transient diode data. Read Python_Code/MODEL_NOTES.md.
+For an already-deployed GitHub project, copy V2 files into that existing
+repository folder, then run git add -A, git commit, git push. The Streamlit
+web app normally updates from your new main-branch commit.
+
+Python dependencies may need internet on first local run. Static HTML does not.

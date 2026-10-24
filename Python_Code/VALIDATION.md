@@ -14,3 +14,17 @@ Tests performed in the packaging environment with Python 3.13 and NumPy/SciPy.
 - Nonlinear k(T) case solves without numerical divergence at 300 W/cm² in the validation scenario.
 
 **Limit:** Browser-based live Streamlit validation and Windows-specific installer testing were not available in this execution environment. The offline Plotly `.htm` preview was successfully generated; the full Streamlit app itself should be smoke-tested after deployment. The numerical tests do not establish agreement with measured diode transients or a published TCAD transient solution.
+
+
+## V2 presentation and export regression (October 24, 2026)
+
+The original ten transient numerical tests remain unchanged and pass. Six additional
+`test_presentation.py` checks validate literal RGB Turbo color stops, shared versus
+independent heatmap limits, plot title removal and logarithmic time handling, expected
+spatial heating direction, and the CSV/ZIP/offline HTML output.
+**16 tests passed** in the full local Python suite.
+
+**Limitation:** this runner could not open a GUI browser or install Streamlit to
+inspect the deployed interface itself. Visual QA of the deployed Streamlit page
+should be completed after publishing V2. This does not affect the original
+numerical validation limitations.

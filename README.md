@@ -2,6 +2,10 @@
 
 **Independent second Streamlit application** by **RafaelDaSquidman**. Explore the predicted **temperature at a diode surface vs time** as its heat source **switches on** and **switches off**, comparing two β-Ga₂O₃ substrate thicknesses. Includes 2D conduction with physical thermal energy storage, configurable power, material properties, heat-sink parameters, and downloadable data. This is educational/model research, **not experimentally validated transient behavior**. See [MODEL_NOTES.md](Python_Code/MODEL_NOTES.md).
 
+## V2 interface updates
+
+The heatmaps now default to **Turbo** with a shared temperature scale, with an optional independent-contrast view for the thin substrate. ON/OFF chart titles and legends no longer overlap. The physics tab displays the equation as formatted mathematics; the offline preview has also been regenerated. See [QA_V2_CHANGELOG.md](QA_V2_CHANGELOG.md).
+
 ## 3 ways to access
 
 1. **Public web app (after you deploy):** people use the full model via the separate Streamlit URL without installing Python. See [DEPLOY_TO_STREAMLIT.md](DEPLOY_TO_STREAMLIT.md).
@@ -52,7 +56,7 @@ cd Python_Code
 python -m unittest discover -s tests -v
 ```
 
-See [VALIDATION.md](Python_Code/VALIDATION.md). Numerical verification is not experimental validation.
+See [VALIDATION.md](Python_Code/VALIDATION.md) and [QA_V2_CHANGELOG.md](QA_V2_CHANGELOG.md). Numerical verification is not experimental validation.
 
 **Companion steady-state app repo:** https://github.com/rafaelh9012-debug/Ga2O3-Thermal-Lab
 

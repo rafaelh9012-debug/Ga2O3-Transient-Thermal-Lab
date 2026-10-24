@@ -1,3 +1,30 @@
+# Update the existing V1 GitHub repository to V2
+
+Your GitHub repository already exists and is deployed separately from the steady-state application:
+
+https://github.com/rafaelh9012-debug/Ga2O3-Transient-Thermal-Lab
+
+**Do not run `git init` again, create another repository, or overwrite `.git/`.**
+
+1. Extract this V2 ZIP into its own folder.
+2. Copy the **contents** of the V2 `Ga2O3_Transient_Thermal_Lab` folder over the files of your already tracked V1 project, choosing to replace the matching application files. Keep your original `.git/` folder untouched. Alternatively, see the PowerShell commands in the response that delivered the V2 ZIP.
+3. Open PowerShell in the existing tracked repository folder and run:
+
+```powershell
+git status
+git add -A
+git commit -m "V2: Turbo heatmaps, clearer charts and equation rendering"
+git push origin main
+```
+
+Your existing Streamlit Community Cloud app normally updates automatically when GitHub receives the new commit. If it does not, open Streamlit Community Cloud → Manage app → Reboot/Rerun.
+
+Cloud entry point stays `Python_Code/app.py`; Python 3.12 is a good choice.
+
+The original steady-state repo `Ga2O3-Thermal-Lab` is unaffected.
+
+---
+
 # Deploy this as a **separate** public Streamlit application
 
 This is a **new GitHub repository**, not a replacement for your existing `Ga2O3-Thermal-Lab` steady-state app.

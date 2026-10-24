@@ -1,16 +1,13 @@
 """Run locally: python -m streamlit run app.py"""
-from dataclasses import replace
-import json
-import numpy as np
 import streamlit as st
 
 from transient_model import TransientSettings, simulate_comparison
-from visuals import phase_plot, field_plot, result_zip, offline_html, format_time, timeseries_frame
+from visuals import phase_plot, field_plot, result_zip, offline_html, format_time, timeseries_frame, HEATMAP_PALETTES
 
 st.set_page_config(page_title='Ga₂O₃ | Transient Thermal Lab',page_icon='🌡️', layout='wide',initial_sidebar_state='expanded')
 st.markdown('''<style>
 .stApp{background:#edf3f8;color:#142b42}
-.block-container{padding-top:1.5rem;max-width:1550px}
+.block-container{padding-top:1.5rem;max-width:1480px}
 [data-testid="stSidebar"]{background:#f8fbfe;border-right:1px solid #d7e2eb}
 [data-testid="stMetric"]{background:#fff;border:1px solid #d5e1ec;border-radius:13px;padding:15px 20px;min-height:116px}
 [data-testid="stMetricLabel"]{color:#405870!important;font-weight:600}
@@ -24,10 +21,15 @@ st.markdown('''<style>
 .hero .eyebrow{font-size:11px;font-weight:800;color:#87e1e1;letter-spacing:2px}
 .hero h1{color:#fff!important;margin:6px 0;font-size:36px;line-height:1.2}
 .hero p{color:#dceaf5;margin:0;font-size:15px;line-height:1.6}
-.section-heading{border-left:4px solid #079ea8;padding-left:12px;margin-top:16px;margin-bottom:6px}
+.section-heading{border-left:4px solid #079ea8;padding-left:14px;margin-top:22px;margin-bottom:4px;line-height:1.5;color:#142b42!important;font-size:1.35rem}
 .note{border:1px solid #eadab5;background:#fff7e5;color:#714b05!important;padding:13px 18px;border-radius:10px;line-height:1.55;margin:12px 0}
 .note strong{color:#623b00!important}
 .smallnote{color:#495d70!important;font-size:13px}
+[data-testid="stMetricDelta"] div{color:#405870!important;background:transparent!important}
+[data-testid="stMetricDelta"] svg{display:none!important}
+[data-testid="stCaptionContainer"] p{color:#51687e!important}
+[data-testid="stMarkdownContainer"] p{line-height:1.55}
+[data-testid="stTabs"] [data-baseweb="tab-list"]{gap:12px;flex-wrap:wrap}
 </style>''',unsafe_allow_html=True)
 
 @st.cache_data(show_spinner=False,max_entries=12)
@@ -99,8 +101,10 @@ with u3:
     st.caption('Both plots use their own elapsed-time axis. Hover to inspect the predicted surface temperatures. Colors are consistent between plots.')
 
 st.markdown('<h3 class="section-heading">1 · Heating response — diode turns ON</h3>',unsafe_allow_html=True)
+st.caption('Heat source switched ON at t = 0. Curves start from the zero-power equilibrium state. Orange = thick substrate; teal = thin substrate.')
 st.plotly_chart(phase_plot(curves,'on',log_time=log_time,unit='K' if temp_unit=='K' else 'C'),use_container_width=True,config={'displaylogo':False,'scrollZoom':True})
 st.markdown('<h3 class="section-heading">2 · Cooling response — diode turns OFF</h3>',unsafe_allow_html=True)
+st.caption('Heat source switched OFF at t = 0. Each curve starts at its own final ON temperature; there is no artificial reset.')
 st.plotly_chart(phase_plot(curves,'off',log_time=log_time,unit='K' if temp_unit=='K' else 'C'),use_container_width=True,config={'displaylogo':False,'scrollZoom':True})
 
 st.markdown('### Transient response metrics')
@@ -116,33 +120,41 @@ for col,c,summary in [(col1,A,a90),(col2,B,b90)]:
 maps, data, about = st.tabs(['Temperature fields','Results & downloads','Physics & limitations'])
 with maps:
     st.markdown('#### Snapshot at the moment the diode turns OFF')
-    st.plotly_chart(field_plot(curves),use_container_width=True,config={'displaylogo':False,'scrollZoom':True})
-    st.caption('Two 2D r–z cross-sections, each in its actual substrate depth. The colorbar is shared; the snapshots are cell-centre fields while the time graphs reconstruct the physical top boundary temperature.')
+    palette=st.selectbox('Temperature map palette',HEATMAP_PALETTES,index=0,help='Turbo is the default. Use the checkbox below to choose a shared or individually enhanced scale.')
+    separate_contrast=st.checkbox('Enhance thin-substrate detail (separate color scales)',value=False,help='On: each heatmap uses its own local temperature range. Off: both use exactly the same temperature-to-color mapping for quantitative comparison.')
+    st.plotly_chart(field_plot(curves,palette=palette,shared_scale=not separate_contrast),use_container_width=True,config={'displaylogo':False,'scrollZoom':True})
+    if separate_contrast:
+        st.caption('Separate color scales emphasize each substrate’s thermal gradient; compare the numerical colorbars, not the colors directly. Depth axes show actual thickness.')
+    else:
+        st.caption('Shared colorbar: the same color represents the same temperature in both substrates. Depth axes show actual thickness.')
+    st.caption('Maps show cell-center temperatures; time curves reconstruct the physical top-boundary temperature.')
 with data:
     st.dataframe(timeseries_frame(curves),use_container_width=True,hide_index=True,height=280)
     try:
         st.download_button('Download CSV, 2D fields & model diagnostics (.zip)',data=result_zip(curves,settings),
                            file_name='Ga2O3_Transient_Results.zip',mime='application/zip')
-        st.download_button('Download an offline interactive HTML snapshot (.htm)',data=offline_html(curves,settings),
+        st.download_button('Download an offline interactive HTML snapshot (.htm)',data=offline_html(curves,settings,palette=palette),
                            file_name='Ga2O3_Transient_Offline.htm',mime='text/html')
     except Exception as exc:
         st.warning(f'Export could not be assembled: {exc}')
 with about:
-    st.markdown(r'''**Governing equation**
-
-\[
-\rho c_p\frac{\partial T}{\partial t}
-=\frac{1}{r}\frac{\partial}{\partial r}\left(r k_r(T)\frac{\partial T}{\partial r}\right)
-+\frac{\partial}{\partial z}\left(k_z(T)\frac{\partial T}{\partial z}\right)+Q(r,z,t)
-\]
-
+    st.markdown('**Governing equation**')
+    st.latex(r"""\begin{aligned}
+    \rho c_p \frac{\partial T}{\partial t}
+    &= \frac{1}{r} \frac{\partial}{\partial r}
+    \left(r k_r(T) \frac{\partial T}{\partial r}\right) \\
+    &\quad+ \frac{\partial}{\partial z}
+    \left(k_z(T) \frac{\partial T}{\partial z}\right)
+    + Q(r,z,t)
+    \end{aligned}""")
+    st.markdown("""
 - **ON:** uniform volumetric heating inside the drift layer, under the circular contact.
-- **OFF:** set that heat source to exactly zero; stored thermal energy continues diffusing out.
-- **Bottom:** fixed temperature heat sink. **Top:** convection to ambient. **Sides:** insulated/symmetry.
-- **Material:** density and heat capacity are adjustable, constant in temperature and initially shared by drift layer and substrate.
+- **OFF:** heat source is set to zero; stored thermal energy continues diffusing out.
+- **Bottom:** fixed-temperature heat sink. **Top:** convection to ambient. **Sides:** insulated/symmetry.
+- **Material:** density and heat capacity are adjustable constants, shared by drift layer and substrate.
 - **Numerics:** conservative 2D axisymmetric finite volumes; implicit backward Euler in time; Picard iteration for the nonlinear k(T) option.
-- **Important:** 2D circular symmetry approximates in-plane anisotropic conduction. This thermal-only simulation omits contacts, packaging, electrical switching dynamics, interface resistance, radiation, and TCAD’s spatial Joule heating.
-''')
+- **Limitations:** axisymmetry approximates in-plane anisotropy. This thermal-only simulation omits contacts, packaging, electrical switching, interface resistance, radiation, and detailed spatial Joule heating.
+""")
     st.caption('Reference 2D steady-state conductivity model: Chiang et al. (2024), DOI 10.1149/2162-8777/ad89fa. Transient heat capacity is an added modeling parameter, not sourced from the original paper.')
     st.markdown('**Previous steady-state project:** [Ga2O3 Thermal Lab](https://github.com/rafaelh9012-debug/Ga2O3-Thermal-Lab). This new transient application is a separate project.')
     st.markdown('**Representative material-property references:** [Leibniz IKZ — density](https://www.ikz-berlin.de/en/offer/gallium-oxide); [2025 Ga₂O₃ review — heat capacity](https://doi.org/10.3390/cryst15100909). These are approximate bulk values, not calibrated for your sample.')
