@@ -8,7 +8,7 @@ import argparse
 from dataclasses import replace
 import json
 from transient_model import TransientSettings, simulate_comparison, as_records
-from visuals import offline_html, timeseries_frame, result_zip
+from transient_visuals_v21 import offline_html, timeseries_frame, result_zip
 
 
 def main():

@@ -8,7 +8,7 @@ import zipfile
 import numpy as np
 
 from transient_model import TransientSettings, simulate_comparison
-from visuals import (HEATMAP_PALETTES, field_plot, phase_plot, offline_html,
+from transient_visuals_v21 import (HEATMAP_PALETTES, field_plot, phase_plot, offline_html,
                      result_zip, scientific_colorscale, timeseries_frame)
 
 

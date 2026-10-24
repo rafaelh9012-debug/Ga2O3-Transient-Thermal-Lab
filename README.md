@@ -38,7 +38,7 @@ python -m streamlit run Python_Code/app.py
 | `Python_Code/app.py` | Streamlit app — **main entry point for cloud deployment** |
 | `Python_Code/transient_model.py` | Physically derived 2D transient solver |
 | `Python_Code/steady_reference.py` | Provenance-preserving previous finite-volume steady solver |
-| `Python_Code/visuals.py` | Plotly charts, export bundle, offline HTML |
+| `Python_Code/transient_visuals_v21.py` | Plotly charts, export bundle, offline HTML (`visuals.py` kept as compatibility shim) |
 | `OPEN_WEB_VERSION.htm` | Standalone offline interactive snapshot |
 | `START_APP.py` | Existing-Python launcher for Spyder and similar IDEs |
 | `RUN_WITH_EXISTING_PYTHON.bat` | Windows interpreter discovery and launch |

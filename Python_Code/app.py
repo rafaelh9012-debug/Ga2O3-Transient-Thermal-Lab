@@ -2,7 +2,7 @@
 import streamlit as st
 
 from transient_model import TransientSettings, simulate_comparison
-from visuals import phase_plot, field_plot, result_zip, offline_html, format_time, timeseries_frame, HEATMAP_PALETTES
+from transient_visuals_v21 import phase_plot, field_plot, result_zip, offline_html, format_time, timeseries_frame, HEATMAP_PALETTES
 
 st.set_page_config(page_title='Ga₂O₃ | Transient Thermal Lab',page_icon='🌡️', layout='wide',initial_sidebar_state='expanded')
 st.markdown('''<style>
